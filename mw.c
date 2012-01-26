@@ -121,9 +121,12 @@ void disp_title_screen(){
 }
 
 void display(){
-	int x, y;
+	int x, y, offset_x, offset_y;
+	offset_x = glutGet(GLUT_WINDOW_WIDTH) / WIDTH;
 
-	//printf("%d\n", glutGet(GLUT_WINDOW_WIDTH));
+	if(offset_x < OFFSET_X) { offset_x = OFFSET_X; }
+	offset_y = glutGet(GLUT_WINDOW_HEIGHT)/ HEIGHT;
+	if(offset_y < OFFSET_Y) { offset_y = OFFSET_Y; }
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	for(x = 0; x < WIDTH; x++){
@@ -132,16 +135,17 @@ void display(){
 			glColor3f(s[x][y].bg_red, s[x][y].bg_green, s[x][y].bg_blue);
 			//glColor3f(0.25,0.25,0.25);
 			glBegin(GL_POLYGON);
-				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
-				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y);
-				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y+OFFSET_Y);
-				glVertex2i(x*OFFSET_X, y*OFFSET_Y+OFFSET_Y);
-				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
+				glVertex2i(x*offset_x,y*offset_y);
+				glVertex2i(x*offset_x+offset_x, y*offset_y);
+				glVertex2i(x*offset_x+offset_x, y*offset_y+offset_y);
+				glVertex2i(x*offset_x, y*offset_y+offset_y);
+				glVertex2i(x*offset_x,y*offset_y);
 			glEnd();
 
 			/* foreground text */
 			glColor3f(s[x][y].fg_red, s[x][y].fg_green, s[x][y].fg_blue);
-			glRasterPos2f(x*OFFSET_X, y*OFFSET_Y);
+
+			glRasterPos2f((x*offset_x)+(offset_x/5), (y*offset_y)+(offset_y/5));
 			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, s[x][y].ch);
 		}
 }
@@ -200,10 +204,11 @@ int main(int argc, char **argv){
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-	glutInitWindowSize(1024, 768);
+
+	//glutInitWindowSize(1024, 768);
 	glutReshapeFunc(NULL);
 	glutCreateWindow("MicroWars");
-
+	glutFullScreen();
 	screen_clear();
 	disp_title_screen();
 	init();
