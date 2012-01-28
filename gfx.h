@@ -48,21 +48,37 @@ void screen_bg_block_update_border(int start_x, int start_y, int end_x, int end_
 /* move to location and print string using fg color */
 void screen_mv_add_str(int x, int y, char *str);
 
+/* move to location and print vertical centered string using fg color */
+void screen_str_center_vert(int x, char *str);
+
+/* move to location and print horizontal centered string using fg color */
+void screen_str_center_horiz(int y, char *str);
+
+/* sets all characters to fg and bg colors */
+void screen_clear_colors(void);
+
 /* sets all characters to null, fg and bg to black */
-void screen_clear();
+void screen_clear(void);
 
 /* draw bg arrow for coordinates. Inputs are offsets. */
 void screen_draw_arrow(int x, int y);
 
 /* display axis marks along with counter for each square */
-void screen_show_x();
+void screen_show_x(void);
 
 /* show list of all printable characters along with their numerical value */
-void screen_show_chars();
+void screen_show_chars(void);
 
 /* complete update of a character on screen */
 void screen_update(int x, int y, char ch, float fg_red, float fg_green, float fg_blue, float bg_red, float bg_green, float bg_blue);
 
-void screen_fx_random();
+/* random colors and chars on screen */
+void screen_fx_random(void);
+
+/* demonstrate color range on screen - approximation */
+void screen_fx_colors(void);
+
+/* sleep for number of milliseconds */
+void inline msleep(unsigned int ms);
 
 #endif /* GFX_H_ */

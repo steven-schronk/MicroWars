@@ -111,13 +111,20 @@ void disp_title_screen(){
 	/* draw floppy disk */
 	screen_set_bg_color(0.027f, 0.23f, 0.45f);
 	screen_set_fg_color(1.0f, 1.0f, 1.0f);
-	screen_bg_block_update(2, 4, 3320, 3360);
+	screen_bg_block_update(45, 22, 83, 45);
 
-	/* write name of developer */
+	screen_str_center_horiz(HEIGHT/2+2, "MicroWars");
+	screen_str_center_horiz(HEIGHT/2, "Steven Ray Schronk");
+	screen_str_center_horiz(HEIGHT/2-4, "Press Any Key To Continue");
 
+	screen_set_bg_color(0.0f, 0.0f, 0.0f);
+	screen_bg_block_update(46, 23, 47, 23); /* copy protect hole */
 
-	/* title of game */
+	screen_set_bg_color(0.3f, 0.3f, 0.3f);
+	screen_bg_block_update(53, 37, 75, 45); /* metal sliding window */
 
+	screen_set_bg_color(0.027f, 0.23f, 0.45f);
+	screen_bg_block_update(66, 38, 70, 44); /* hole in metal sliding window */
 }
 
 void display(){
@@ -171,6 +178,22 @@ void keyboard(unsigned char key, int x, int y){
 	y = 0;
 	printf("Keypress: %c\n", key);
 	switch (key){
+	case 'a':
+		//msleep(100);
+		screen_bg_color.red = 0.434;
+		screen_bg_color.green = 0.345;
+		screen_bg_color.blue = 0.432;
+		screen_clear_colors();
+		screen_fg_color.red = 1.0;
+		screen_fg_color.green = 1.0;
+		screen_fg_color.blue = 1.0;
+		screen_str_center_horiz(HEIGHT/2, "Console Edition");
+		screen_str_center_vert(WIDTH/2, "Console Edition");
+		screen_fx_colors();
+		break;
+	case 'b':
+		screen_fx_random();
+		break;
 	case 'c':
 		screen_show_chars();
 		break;

@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "lib_random.h"
 
@@ -15,5 +16,7 @@ int random_int(int min, int max)
 
 void random_seed()
 {
-	srand(time(0));
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	srand(tv.tv_usec);
 }

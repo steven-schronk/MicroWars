@@ -1,7 +1,20 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "lib/lib_random.h"
 #include "gfx.h"
+
+inline void screen_copy_color(int x, int y){
+	assert(x >= 0 || x < WIDTH);
+	assert(y >= 0 || y < HEIGHT);
+	s[x][y].fg_blue = screen_fg_color.blue;
+	s[x][y].fg_red = screen_fg_color.red;
+	s[x][y].fg_green = screen_fg_color.green;
+	s[x][y].bg_blue = screen_bg_color.blue;
+	s[x][y].bg_red = screen_bg_color.red;
+	s[x][y].bg_green = screen_bg_color.green;
+}
 
 void screen_set_bg_color(float red, float green, float blue){
 	assert(red >= 0.0);
@@ -109,6 +122,38 @@ void screen_mv_add_str(int x, int y, char *str){
 	}
 }
 
+void screen_str_center_vert(int x, char *str){
+	assert(str);
+	assert(x >= 0 || x <= WIDTH);
+	int char_count, y;
+	char_count = strlen(str);
+	y = (HEIGHT/2) + (char_count/2);
+	while(*str){ screen_fg_update_color(x, y--, *str++); }
+}
+
+void screen_str_center_horiz(int y, char *str){
+	assert(str);
+	assert(y >= 0 || y <= WIDTH);
+	int char_count, x;
+	char_count = strlen(str);
+	x = (WIDTH/2) - (char_count/2);
+	while(*str){ screen_fg_update_color(x++, y, *str++); }
+}
+
+void screen_clear_colors(){
+	int x, y;
+	for(x = 0; x < WIDTH; x++)
+		for(y = 0; y < HEIGHT; y++){
+			s[x][y].ch = '\0';
+			s[x][y].fg_red   = screen_fg_color.red;
+			s[x][y].fg_green = screen_fg_color.green;
+			s[x][y].fg_blue  = screen_fg_color.blue;
+			s[x][y].bg_red   = screen_bg_color.red;
+			s[x][y].bg_green = screen_bg_color.green;
+			s[x][y].bg_blue  = screen_bg_color.blue;
+		}
+}
+
 void screen_clear(){
 	int x, y;
 	for(x = 0; x < WIDTH; x++)
@@ -204,19 +249,7 @@ void screen_show_x(){
 		}
 			x += 10;
 	}
-
-	/* draw arrows for X and Y axis
-	r = 0.25f; g=0.0f; b=0.0f; // dk red
-	for(x=2,y=3; x<15; x++)
-		screen_bg_update(x, y, r, g, b);
-		screen_fg_update(x,y,'X');
-	r = 0.0f; g=0.0f; b=0.25f; // dk red
-	for(x=2,y=3; y<14; y++)
-		screen_bg_update(x, y, r, g, b);
-		screen_fg_update(x,y,'Y');
-	*/
 	screen_draw_arrow(1,1);
-
 }
 
 void screen_show_chars(){
@@ -241,8 +274,6 @@ void screen_show_chars(){
 		}
 		ch++;y=y+2;
 	}
-
-	//screen_fg_update(1,1,24);
 
 	x=x+10; y = 5;
 	while(ch<50){
@@ -274,16 +305,66 @@ void screen_update(int x, int y, char ch, float fg_red, float fg_green, float fg
 }
 
 void screen_fx_random(){
-	int x, y;
-
+	int x, y, z;
+	float val = 0.0f;
 	random_seed();
-
 	for(x=0; x < WIDTH; x++){
 		for(y = 0; y < HEIGHT; y++){
-			s[x][y].bg_blue = random_int(0, 10);
-			s[x][y].bg_red = random_int(0, 10);
-			s[x][y].bg_green = random_int(0, 10);
+			z = random_int(0,255)/255;
+			s[x][y].bg_blue =  (float)random_int(1,10000)/10000;
+			s[x][y].bg_red =   (float)random_int(1,10000)/10000;
+			s[x][y].bg_green = (float)random_int(1,10000)/10000;
+			s[x][y].fg_blue =  (float)random_int(1,10000)/10000;
+			s[x][y].fg_red =   (float)random_int(1,10000)/10000;
+			s[x][y].fg_green = (float)random_int(1,10000)/10000;
 			s[x][y].ch = random_int(0, 128);
 		}
 	}
+}
+
+void screen_fx_colors(){
+	int x, y;
+	float offset = (float)1/(WIDTH*HEIGHT);
+	float h_offset = (float)1/HEIGHT*2;
+	screen_bg_color.blue =  0.0f;
+	screen_bg_color.red =   1.0f;
+
+	for(x=0; x < WIDTH; x++){
+		screen_bg_color.green = 1.0f;
+		for(y = 1; y < HEIGHT; y++){
+			 screen_copy_color(x, y);
+			 screen_bg_color.blue += offset;
+			 screen_bg_color.red -= offset;
+			 if(y > HEIGHT/2){ screen_bg_color.green += h_offset; }
+			 else { screen_bg_color.green -= h_offset; }
+		}
+	}
+	offset = (float)1/WIDTH;
+	screen_bg_color.blue =  0.0f;
+	screen_bg_color.red =   0.0f;
+	screen_bg_color.green = 0.0f;
+	screen_fg_color.blue =  1.0f;
+	screen_fg_color.red =   1.0f;
+	screen_fg_color.green = 1.0f;
+	y = 0;
+	for(x = 0; x < WIDTH; x++){
+		screen_copy_color(x, y);
+		screen_bg_color.blue += offset;
+		screen_bg_color.red += offset;
+		screen_bg_color.green += offset;
+		screen_fg_color.blue -= offset;
+		screen_fg_color.red -= offset;
+		screen_fg_color.green -= offset;
+		s[x][y].ch = 1;
+	}
+}
+
+void inline msleep(unsigned int ms) {
+#ifdef WIN32
+	Sleep(ms);
+#else
+	// usleep argument must be under 1 000 000
+	if (ms > 1000) sleep(ms/1000000);
+	usleep((ms % 1000000) * 1000);
+#endif
 }
