@@ -4,16 +4,33 @@
 #include <string.h>
 #include "lib/lib_random.h"
 #include "gfx.h"
+#include "windows.h"
 
-inline void screen_copy_color(int x, int y){
+void screen_copy(int x, int y){
 	assert(x >= 0 || x < WIDTH);
 	assert(y >= 0 || y < HEIGHT);
-	s[x][y].fg_blue = screen_fg_color.blue;
-	s[x][y].fg_red = screen_fg_color.red;
-	s[x][y].fg_green = screen_fg_color.green;
-	s[x][y].bg_blue = screen_bg_color.blue;
-	s[x][y].bg_red = screen_bg_color.red;
-	s[x][y].bg_green = screen_bg_color.green;
+	s[x][y].fg_rd = screen_fg_color.rd;
+	s[x][y].fg_gr = screen_fg_color.gr;
+	s[x][y].fg_bl = screen_fg_color.bl;
+	s[x][y].bg_rd = screen_bg_color.rd;
+	s[x][y].bg_gr = screen_bg_color.gr;
+	s[x][y].bg_bl = screen_bg_color.bl;
+}
+
+void screen_copy_fg(int x, int y){
+	assert(x >= 0 || x < WIDTH);
+	assert(y >= 0 || y < HEIGHT);
+	s[x][y].fg_rd = screen_fg_color.rd;
+	s[x][y].fg_gr = screen_fg_color.gr;
+	s[x][y].fg_bl = screen_fg_color.bl;
+}
+
+void screen_copy_bg(int x, int y){
+	assert(x >= 0 || x < WIDTH);
+	assert(y >= 0 || y < HEIGHT);
+	s[x][y].bg_rd = screen_bg_color.rd;
+	s[x][y].bg_gr = screen_bg_color.gr;
+	s[x][y].bg_bl = screen_bg_color.bl;
 }
 
 void screen_set_bg_color(float red, float green, float blue){
@@ -23,9 +40,9 @@ void screen_set_bg_color(float red, float green, float blue){
 	assert(green <= 1.0);
 	assert(blue >= 0.0);
 	assert(blue <= 1.0);
-	screen_bg_color.red = red;
-	screen_bg_color.green = green;
-	screen_bg_color.blue = blue;
+	screen_bg_color.rd = red;
+	screen_bg_color.gr = green;
+	screen_bg_color.bl = blue;
 }
 
 void screen_set_fg_color(float red, float green, float blue){
@@ -35,37 +52,37 @@ void screen_set_fg_color(float red, float green, float blue){
 	assert(green <= 1.0);
 	assert(blue >= 0.0);
 	assert(blue <= 1.0);
-	screen_fg_color.red = red;
-	screen_fg_color.green = green;
-	screen_fg_color.blue = blue;
+	screen_fg_color.rd = red;
+	screen_fg_color.gr = green;
+	screen_fg_color.bl = blue;
 }
 
 void screen_fg_update_color(int x, int y, char ch){
 	assert(x < WIDTH);
 	assert(y < HEIGHT);
 	s[x][y].ch = ch;
-	s[x][y].bg_red = screen_bg_color.red;
-	s[x][y].bg_blue = screen_bg_color.blue;
-	s[x][y].bg_green = screen_bg_color.green;
-	s[x][y].fg_red = screen_fg_color.red;
-	s[x][y].fg_blue = screen_fg_color.blue;
-	s[x][y].fg_green = screen_fg_color.green;
+	s[x][y].bg_rd = screen_bg_color.rd;
+	s[x][y].bg_bl = screen_bg_color.bl;
+	s[x][y].bg_gr = screen_bg_color.gr;
+	s[x][y].fg_rd = screen_fg_color.rd;
+	s[x][y].fg_bl = screen_fg_color.bl;
+	s[x][y].fg_gr = screen_fg_color.gr;
 }
 
-void screen_fg_update(int x, int y, char ch){
+void screen_char_update(int x, int y, char ch){
 	assert(x < WIDTH);
 	assert(y < HEIGHT);
 	s[x][y].ch = ch;
 }
 
-void screen_bg_update(int x, int y, float red, float green, float blue){
+void screen_bg_update(int x, int y){
 	assert(x <= WIDTH);
 	assert(y <= HEIGHT);
 	assert(x >= 0);
 	assert(y >= 0);
-	s[x][y].bg_red = red;
-	s[x][y].bg_green = green;
-	s[x][y].bg_blue = blue;
+	s[x][y].bg_rd = screen_bg_color.rd;
+	s[x][y].bg_gr = screen_bg_color.gr;
+	s[x][y].bg_bl = screen_bg_color.bl;
 }
 
 void screen_bg_block_update(int start_x, int start_y, int end_x, int end_y){
@@ -78,7 +95,8 @@ void screen_bg_block_update(int start_x, int start_y, int end_x, int end_y){
 	assert(start_y <= end_y);
 	for(x = start_x; x <= end_x && x < WIDTH; x++){
 		for(y = start_y; y <= end_y && y < HEIGHT; y++){
-			screen_bg_update(x, y, screen_bg_color.red, screen_bg_color.green, screen_bg_color.blue);
+			screen_set_bg_color(screen_bg_color.rd, screen_bg_color.gr, screen_bg_color.bl);
+			screen_bg_update(x, y);
 		}
 	}
 }
@@ -93,7 +111,8 @@ void screen_bg_block_update_border(int start_x, int start_y, int end_x, int end_
 	assert(start_y <= end_y);
 	for(x = start_x; x <= end_x && x < WIDTH; x++){
 		for(y = start_y; y <= end_y && y < HEIGHT; y++){
-			screen_bg_update(x, y, screen_bg_color.red, screen_bg_color.green, screen_bg_color.blue);
+			screen_set_bg_color(screen_bg_color.rd, screen_bg_color.gr, screen_bg_color.bl);
+			screen_bg_update(x, y);
 		}
 	}
 	/* top horiz border */
@@ -116,7 +135,7 @@ void screen_mv_add_str(int x, int y, char *str){
 	assert(str);
 
 	while(*str && x < WIDTH){
-		screen_fg_update(x, y, *str);
+		screen_char_update(x, y, *str);
 		str++;
 		x++;
 	}
@@ -145,12 +164,12 @@ void screen_clear_colors(){
 	for(x = 0; x < WIDTH; x++)
 		for(y = 0; y < HEIGHT; y++){
 			s[x][y].ch = '\0';
-			s[x][y].fg_red   = screen_fg_color.red;
-			s[x][y].fg_green = screen_fg_color.green;
-			s[x][y].fg_blue  = screen_fg_color.blue;
-			s[x][y].bg_red   = screen_bg_color.red;
-			s[x][y].bg_green = screen_bg_color.green;
-			s[x][y].bg_blue  = screen_bg_color.blue;
+			s[x][y].fg_rd   = screen_fg_color.rd;
+			s[x][y].fg_gr = screen_fg_color.gr;
+			s[x][y].fg_bl  = screen_fg_color.bl;
+			s[x][y].bg_rd   = screen_bg_color.rd;
+			s[x][y].bg_gr = screen_bg_color.gr;
+			s[x][y].bg_bl  = screen_bg_color.bl;
 		}
 }
 
@@ -159,12 +178,12 @@ void screen_clear(){
 	for(x = 0; x < WIDTH; x++)
 		for(y = 0; y < HEIGHT; y++){
 			s[x][y].ch = '\0';
-			s[x][y].fg_red = 1.0f;
-			s[x][y].fg_green = 1.0f;
-			s[x][y].fg_blue = 1.0f;
-			s[x][y].bg_red = 0.0f;
-			s[x][y].bg_green = 0.0f;
-			s[x][y].bg_blue = 0.0f;
+			s[x][y].fg_rd = 1.0f;
+			s[x][y].fg_gr = 1.0f;
+			s[x][y].fg_bl = 1.0f;
+			s[x][y].bg_rd = 0.0f;
+			s[x][y].bg_gr = 0.0f;
+			s[x][y].bg_bl = 0.0f;
 		}
 }
 
@@ -174,7 +193,7 @@ void screen_draw_arrow(int x, int y){
 	screen_bg_block_update(x+4, y+4, x+17, y+6);
 
 	/* point of x arrow */
-	screen_bg_block_update(x+14, y, x+14, y+10);
+	screen_bg_block_update(x+14, y,   x+14, y+10);
 	screen_bg_block_update(x+15, y+1, x+15, y+9);
 	screen_bg_block_update(x+16, y+2, x+16, y+8);
 	screen_bg_block_update(x+17, y+3, x+17, y+7);
@@ -187,12 +206,12 @@ void screen_draw_arrow(int x, int y){
 	screen_bg_block_update(x+4, y+4, x+6, y+17);
 
 	/* point of y arrow */
-	screen_bg_block_update(x+4, y+4, x+6, y+17);
-	screen_bg_block_update(x, y+14, x+10, y+14);
-	screen_bg_block_update(x+1, y+15, x+9, y+15);
-	screen_bg_block_update(x+2, y+16, x+8, y+16);
-	screen_bg_block_update(x+1, y+15, x+8, y+15);
-	screen_bg_block_update(x+5, y+18, x+5, y+18);
+	screen_bg_block_update(x+4, y+4,  x+6,  y+17);
+	screen_bg_block_update(x,   y+14, x+10, y+14);
+	screen_bg_block_update(x+1, y+15, x+9,  y+15);
+	screen_bg_block_update(x+2, y+16, x+8,  y+16);
+	screen_bg_block_update(x+1, y+15, x+8,  y+15);
+	screen_bg_block_update(x+5, y+18, x+5,  y+18);
 }
 
 void screen_show_x(){
@@ -207,21 +226,22 @@ void screen_show_x(){
 	for(y=0, ch='0';y<HEIGHT;y++){
 		if(y%10){ r += .001; }
 		for(x=0, ch='0';x<WIDTH;x+=2){
-			screen_bg_update(x,y,r,g,b);
+			screen_set_bg_color(r,g,b);
+			screen_bg_update(x,y);
 		}
 	}
 
 	/* horizontal grid lines */
 	for(y=0, ch='0';y<HEIGHT;y+=2){
-		for(x=0, ch='0';x<WIDTH;x++){
-			screen_bg_update(x,y,0.1f,0.1f,0.1f);
-		}
+		for(x=0, ch='0';x<WIDTH;x++)
+			screen_set_bg_color(0.1f,0.1f,0.1f);
+			screen_bg_update(x,y);
 	}
 
 	/* horizontal numbers */
 	for(y=0, ch='0';y<HEIGHT;y+=10){
 		for(x=0, ch='0';x<WIDTH;x++){
-			screen_fg_update(x,y,ch);
+			screen_char_update(x,y,ch);
 			if(ch == '9') { ch = '0'; } else { ch++; }
 		}
 	}
@@ -229,7 +249,7 @@ void screen_show_x(){
 	/* vertical numbers */
 	for(x=0, ch='0';x<WIDTH;x+=10){
 		for(y=0, ch='0';y<HEIGHT;y++){
-			screen_fg_update(x,y,ch);
+			screen_char_update(x,y,ch);
 			if(ch == '9') { ch = '0'; } else { ch++; }
 		}
 	}
@@ -254,69 +274,35 @@ void screen_show_x(){
 
 void screen_show_chars(){
 	char ch = 0;
-	int x, y = 1, z;
+	int x = 5, y = HEIGHT-5;
 	char str[5];
-	char *p_str;
 	screen_clear();
-
 	screen_mv_add_str(WIDTH/2-9, 62, "Character Map");
+	screen_set_bg_color(0.25, 0.25, 0.25);
+	screen_set_fg_color(1.0, 1.0, 0.0);
 
-	x=5;y=5;
-	while(ch<25){
-		screen_fg_update(x, y, ch);
+	while(ch < 127) {
+		screen_fg_update_color(x, y, ch);
 		sprintf(str, "%d", ch);
-		p_str = str;
-		z = x+3;
-		while(*p_str != '\0'){
-			screen_fg_update(z, y, *p_str);
-			p_str++;
-			z++;
-		}
-		ch++;y=y+2;
-	}
-
-	x=x+10; y = 5;
-	while(ch<50){
-		screen_fg_update(x, y, ch);
-		sprintf(str, "%d", ch);
-		p_str = str;
-		z = x+3;
-		while(*p_str != '\0'){
-			screen_fg_update(z, y, *p_str);
-			p_str++;
-			z++;
-		}
+		screen_mv_add_str(x + 3, y, str);
 		ch++;
-		y=y+2;
+		y -= 3;
+		printf("%d\n", x);
+		if(y < 5) { y = HEIGHT-5; x+= 16; }
 	}
-}
-
-void screen_update(int x, int y, char ch, float fg_red, float fg_green, float fg_blue, float bg_red, float bg_green, float bg_blue)
-{
-	// add assertions here
-	s[x][y].fg_red = fg_red;
-	s[x][y].fg_green = fg_green;
-	s[x][y].fg_blue = fg_blue;
-
-	s[x][y].bg_red = bg_red;
-	s[x][y].bg_green = bg_green;
-	s[x][y].bg_blue = bg_blue;
-	s[x][y].ch = ch;
 }
 
 void screen_fx_random(){
-	int x, y, z;
-	float val = 0.0f;
+	int x, y;
 	random_seed();
 	for(x=0; x < WIDTH; x++){
 		for(y = 0; y < HEIGHT; y++){
-			z = random_int(0,255)/255;
-			s[x][y].bg_blue =  (float)random_int(1,10000)/10000;
-			s[x][y].bg_red =   (float)random_int(1,10000)/10000;
-			s[x][y].bg_green = (float)random_int(1,10000)/10000;
-			s[x][y].fg_blue =  (float)random_int(1,10000)/10000;
-			s[x][y].fg_red =   (float)random_int(1,10000)/10000;
-			s[x][y].fg_green = (float)random_int(1,10000)/10000;
+			s[x][y].bg_bl =  (float)random_int(1,10000)/10000;
+			s[x][y].bg_rd =   (float)random_int(1,10000)/10000;
+			s[x][y].bg_gr = (float)random_int(1,10000)/10000;
+			s[x][y].fg_bl =  (float)random_int(1,10000)/10000;
+			s[x][y].fg_rd =   (float)random_int(1,10000)/10000;
+			s[x][y].fg_gr = (float)random_int(1,10000)/10000;
 			s[x][y].ch = random_int(0, 128);
 		}
 	}
@@ -326,40 +312,52 @@ void screen_fx_colors(){
 	int x, y;
 	float offset = (float)1/(WIDTH*HEIGHT);
 	float h_offset = (float)1/HEIGHT*2;
-	screen_bg_color.blue =  0.0f;
-	screen_bg_color.red =   1.0f;
+	screen_bg_color.bl =  0.0f;
+	screen_bg_color.rd =   1.0f;
 
 	for(x=0; x < WIDTH; x++){
-		screen_bg_color.green = 1.0f;
+		screen_bg_color.gr = 1.0f;
 		for(y = 1; y < HEIGHT; y++){
-			 screen_copy_color(x, y);
-			 screen_bg_color.blue += offset;
-			 screen_bg_color.red -= offset;
-			 if(y > HEIGHT/2){ screen_bg_color.green += h_offset; }
-			 else { screen_bg_color.green -= h_offset; }
+			 screen_copy(x, y);
+			 screen_bg_color.bl += offset;
+			 screen_bg_color.rd -= offset;
+			 if(y > HEIGHT/2){ screen_bg_color.gr += h_offset; }
+			 else { screen_bg_color.gr -= h_offset; }
 		}
 	}
 	offset = (float)1/WIDTH;
-	screen_bg_color.blue =  0.0f;
-	screen_bg_color.red =   0.0f;
-	screen_bg_color.green = 0.0f;
-	screen_fg_color.blue =  1.0f;
-	screen_fg_color.red =   1.0f;
-	screen_fg_color.green = 1.0f;
+	screen_bg_color.bl =  0.0f;
+	screen_bg_color.rd =   0.0f;
+	screen_bg_color.gr = 0.0f;
+	screen_fg_color.bl =  1.0f;
+	screen_fg_color.rd =   1.0f;
+	screen_fg_color.gr = 1.0f;
 	y = 0;
 	for(x = 0; x < WIDTH; x++){
-		screen_copy_color(x, y);
-		screen_bg_color.blue += offset;
-		screen_bg_color.red += offset;
-		screen_bg_color.green += offset;
-		screen_fg_color.blue -= offset;
-		screen_fg_color.red -= offset;
-		screen_fg_color.green -= offset;
+		screen_copy(x, y);
+		screen_bg_color.bl += offset;
+		screen_bg_color.rd += offset;
+		screen_bg_color.gr += offset;
+		screen_fg_color.bl -= offset;
+		screen_fg_color.rd -= offset;
+		screen_fg_color.gr -= offset;
 		s[x][y].ch = 1;
 	}
 }
 
-void inline msleep(unsigned int ms) {
+void screen_fx_random_square(){
+	int a, b, c, d;
+	screen_bg_color.rd = (float)random_int(1,10000)/10000;
+	screen_bg_color.gr = (float)random_int(1,10000)/10000;
+	screen_bg_color.bl = (float)random_int(1,10000)/10000;
+	a = random_int(0, WIDTH);
+	b = random_int(a, WIDTH);
+	c = random_int(0, HEIGHT);
+	d = random_int(c, HEIGHT);
+	screen_bg_block_update(a, c, b, d);
+}
+
+void inline msleep(unsigned int ms){
 #ifdef WIN32
 	Sleep(ms);
 #else

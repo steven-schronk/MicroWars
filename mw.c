@@ -43,7 +43,7 @@ static struct game_type game = { 0, 0, 0, 0, 0 };
 void init_map(){
 	int i, j;
 	/* set basic start state for each tile */
-	for (i = 0; i < MAP_MAX; i++){
+	for (i = 0; i < MAP_MAX; i++)
 		for (j = 0; j < MAP_MAX; j++){
 			map[i][j].unit = NULL;
 			map[i][j].terrain_type = random_int(0, forrest); /* TODO: length */
@@ -53,7 +53,6 @@ void init_map(){
 				map[i][j].unit->unit_name = random_int(0, 3);
 			}
 		}
-	}
 }
 
 void draw_player_stats(){
@@ -139,7 +138,7 @@ void display(){
 	for(x = 0; x < WIDTH; x++){
 		for(y = 0; y < HEIGHT; y++){
 			/* background poly */
-			glColor3f(s[x][y].bg_red, s[x][y].bg_green, s[x][y].bg_blue);
+			glColor3f(s[x][y].bg_rd, s[x][y].bg_gr, s[x][y].bg_bl);
 			//glColor3f(0.25,0.25,0.25);
 			glBegin(GL_POLYGON);
 				glVertex2i(x*offset_x,y*offset_y);
@@ -150,7 +149,7 @@ void display(){
 			glEnd();
 
 			/* foreground text */
-			glColor3f(s[x][y].fg_red, s[x][y].fg_green, s[x][y].fg_blue);
+			glColor3f(s[x][y].fg_rd, s[x][y].fg_gr, s[x][y].fg_bl);
 
 			glRasterPos2f((x*offset_x)+(offset_x/5), (y*offset_y)+(offset_y/5));
 			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, s[x][y].ch);
@@ -180,13 +179,13 @@ void keyboard(unsigned char key, int x, int y){
 	switch (key){
 	case 'a':
 		//msleep(100);
-		screen_bg_color.red = 0.434;
-		screen_bg_color.green = 0.345;
-		screen_bg_color.blue = 0.432;
+		screen_bg_color.rd = 0.434;
+		screen_bg_color.gr = 0.345;
+		screen_bg_color.bl = 0.432;
 		screen_clear_colors();
-		screen_fg_color.red = 1.0;
-		screen_fg_color.green = 1.0;
-		screen_fg_color.blue = 1.0;
+		screen_fg_color.rd = 1.0;
+		screen_fg_color.gr = 1.0;
+		screen_fg_color.bl = 1.0;
 		screen_str_center_horiz(HEIGHT/2, "Console Edition");
 		screen_str_center_vert(WIDTH/2, "Console Edition");
 		screen_fx_colors();
@@ -199,6 +198,9 @@ void keyboard(unsigned char key, int x, int y){
 		break;
 	case 's':
 		draw_player_stats();
+		break;
+	case 'k':
+		screen_fx_random_square();
 		break;
 	case 'l':
 		//move_entity(selected_entity.x, selected_entity.y, selected_entity.x-1, selected_entity.y);
