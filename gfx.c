@@ -274,21 +274,20 @@ void screen_show_x(){
 
 void screen_show_chars(){
 	char ch = 0;
-	int x = 5, y = HEIGHT-5;
+	int x = 5, y = HEIGHT-8;
 	char str[5];
 	screen_clear();
-	screen_mv_add_str(WIDTH/2-9, 62, "Character Map");
+	screen_mv_add_str(WIDTH/2-9, HEIGHT - 5, "Character Map");
 	screen_set_bg_color(0.25, 0.25, 0.25);
 	screen_set_fg_color(1.0, 1.0, 0.0);
 
-	while(ch < 127) {
+	while(ch < 127) { /* 127 = highest char until overflow */
 		screen_fg_update_color(x, y, ch);
 		sprintf(str, "%d", ch);
 		screen_mv_add_str(x + 3, y, str);
 		ch++;
 		y -= 3;
-		printf("%d\n", x);
-		if(y < 5) { y = HEIGHT-5; x+= 16; }
+		if(y < 5) { y = HEIGHT-8; x+= 8; }
 	}
 }
 

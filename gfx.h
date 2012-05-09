@@ -1,10 +1,10 @@
 #ifndef GFX_H_
 #define GFX_H_
 
-#define WIDTH 128
-#define HEIGHT 64
-#define OFFSET_X 8
-#define OFFSET_Y 12
+#define WIDTH 79
+#define HEIGHT 63
+#define OFFSET_X 13
+#define OFFSET_Y 13
 
 struct screen {
 	char ch;

@@ -8,6 +8,9 @@
 #include "lib/lib_random.h"
 #include "gfx.h"
 
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 768
+
 #define MAP_MAX 10
 
 struct unit_type {
@@ -110,20 +113,20 @@ void disp_title_screen(){
 	/* draw floppy disk */
 	screen_set_bg_color(0.027f, 0.23f, 0.45f);
 	screen_set_fg_color(1.0f, 1.0f, 1.0f);
-	screen_bg_block_update(45, 22, 83, 45);
+	screen_bg_block_update(20, 22, 56, 45);
 
 	screen_str_center_horiz(HEIGHT/2+2, "MicroWars");
 	screen_str_center_horiz(HEIGHT/2, "Steven Ray Schronk");
 	screen_str_center_horiz(HEIGHT/2-4, "Press Any Key To Continue");
 
 	screen_set_bg_color(0.0f, 0.0f, 0.0f);
-	screen_bg_block_update(46, 23, 47, 23); /* copy protect hole */
+	screen_bg_block_update(26, 23, 27, 23); /* copy protect hole */
 
 	screen_set_bg_color(0.3f, 0.3f, 0.3f);
-	screen_bg_block_update(53, 37, 75, 45); /* metal sliding window */
+	screen_bg_block_update(25, 37, 48, 45); /* metal sliding window */
 
 	screen_set_bg_color(0.027f, 0.23f, 0.45f);
-	screen_bg_block_update(66, 38, 70, 44); /* hole in metal sliding window */
+	screen_bg_block_update(41, 38, 45, 44); /* hole in metal sliding window */
 }
 
 void display(){
@@ -165,11 +168,9 @@ void init(void){
 	/* glEnable(GL_DEPTH_TEST); */
 }
 
-void reshape(int w, int h){
-	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0.0, (GLdouble) w, 0.0, (GLdouble) h);
+void reshape(){
+	glutReshapeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
+	display();
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -230,10 +231,14 @@ int main(int argc, char **argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 
-	//glutInitWindowSize(1024, 768);
-	glutReshapeFunc(NULL);
+	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	glutInitWindowPosition(0,0);
 	glutCreateWindow("MicroWars");
-	glutFullScreen();
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, WINDOW_WIDTH, 0.0, WINDOW_HEIGHT);
+
 	screen_clear();
 	disp_title_screen();
 	init();
