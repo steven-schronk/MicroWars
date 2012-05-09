@@ -3,8 +3,7 @@
 
 #define WIDTH 79
 #define HEIGHT 63
-#define OFFSET_X 13
-#define OFFSET_Y 13
+#define OFFSET 13
 
 struct screen {
 	char ch;
