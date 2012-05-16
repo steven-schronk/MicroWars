@@ -1,9 +1,11 @@
 #ifndef GFX_H_
 #define GFX_H_
 
-#define WIDTH 79
-#define HEIGHT 63
-#define OFFSET 13
+#define WIDTH 113	/* number of horizontal squares */
+#define HEIGHT 51	/* number of vertical squares */
+
+#define OFFSET_X 9 	/* number of pixels width for each square */
+#define OFFSET_Y 15 /* number of pixels height for each square */
 
 struct screen {
 	char ch;

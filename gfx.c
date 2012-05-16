@@ -4,7 +4,6 @@
 #include <string.h>
 #include "lib/lib_random.h"
 #include "gfx.h"
-#include "windows.h"
 
 void screen_copy(int x, int y){
 	assert(x >= 0 || x < WIDTH);
@@ -96,6 +95,8 @@ void screen_bg_block_update(int start_x, int start_y, int end_x, int end_y){
 	for(x = start_x; x <= end_x && x < WIDTH; x++){
 		for(y = start_y; y <= end_y && y < HEIGHT; y++){
 			screen_set_bg_color(screen_bg_color.rd, screen_bg_color.gr, screen_bg_color.bl);
+			printf("Updating Char\n");
+			screen_char_update(x, y, '\0');
 			screen_bg_update(x, y);
 		}
 	}
@@ -112,17 +113,18 @@ void screen_bg_block_update_border(int start_x, int start_y, int end_x, int end_
 	for(x = start_x; x <= end_x && x < WIDTH; x++){
 		for(y = start_y; y <= end_y && y < HEIGHT; y++){
 			screen_set_bg_color(screen_bg_color.rd, screen_bg_color.gr, screen_bg_color.bl);
+			screen_char_update(x, y, '\0');
 			screen_bg_update(x, y);
 		}
 	}
-	/* top horiz border */
-	for(x = start_x; x <= end_x && x < WIDTH; x++){ s[x][start_y].ch = 18; }
 	/* bottom horiz border */
+	for(x = start_x; x <= end_x && x < WIDTH; x++){ s[x][start_y].ch = 18; }
+	/* top horiz border */
 	for(x = start_x; x <= end_x && x < WIDTH; x++){ s[x][end_y].ch = 18; }
 	/* left border */
-	for(y = start_y-1; y <= end_y-1 && y < HEIGHT; y++){ s[start_x][y].ch = 25; }
+	for(y = start_y; y <= end_y-1 && y < HEIGHT; y++){ s[start_x][y].ch = 25; }
 	/* right border */
-	for(y = start_y-1; y <= end_y-1 && y < HEIGHT; y++){ s[end_x][y].ch = 25; }
+	for(y = start_y; y <= end_y-1 && y < HEIGHT; y++){ s[end_x][y].ch = 25; }
 	s[end_x][start_y].ch = 11; /* bottom right */
 	s[end_x][end_y].ch = 12; /* top left corner */
 	s[start_x][end_y].ch = 13; /* top left corner */

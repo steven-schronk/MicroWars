@@ -149,32 +149,24 @@ void disp_title_screen(){
 }
 
 void display(){
-	int x, y, offset;
-	offset = glutGet(GLUT_WINDOW_WIDTH) / WIDTH;
-
-	if(offset < OFFSET) { offset = OFFSET; }
-	offset = glutGet(GLUT_WINDOW_HEIGHT)/ HEIGHT;
-	if(offset < OFFSET) { offset = OFFSET; }
-
+	int x, y;
 	glClear(GL_COLOR_BUFFER_BIT);
 	for(x = 0; x < WIDTH; x++){
 		for(y = 0; y < HEIGHT; y++){
 			/* background poly */
 			glColor3f(s[x][y].bg_rd, s[x][y].bg_gr, s[x][y].bg_bl);
-			//glColor3f(0.25,0.25,0.25);
 			glBegin(GL_POLYGON);
-				glVertex2i(x*offset,y*offset);
-				glVertex2i(x*offset+offset, y*offset);
-				glVertex2i(x*offset+offset, y*offset+offset);
-				glVertex2i(x*offset, y*offset+offset);
-				glVertex2i(x*offset,y*offset);
+				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
+				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y);
+				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y+OFFSET_Y);
+				glVertex2i(x*OFFSET_X, y*OFFSET_Y+OFFSET_Y);
+				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
 			glEnd();
 
 			/* foreground text */
 			glColor3f(s[x][y].fg_rd, s[x][y].fg_gr, s[x][y].fg_bl);
-
-			glRasterPos2f((x*offset)+(offset/5), (y*offset)+(offset/5));
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, s[x][y].ch);
+			glRasterPos2f(x*OFFSET_X, (y*OFFSET_Y)+3);
+			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, s[x][y].ch);
 		}
 }
 	glFlush();
