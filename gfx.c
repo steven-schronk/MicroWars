@@ -136,6 +136,9 @@ void screen_mv_add_str(int x, int y, char *str){
 
 	while(*str && x < WIDTH){
 		screen_char_update(x, y, *str);
+		s[x][y].fg_rd = screen_fg_color.rd;
+		s[x][y].fg_gr = screen_fg_color.gr;
+		s[x][y].fg_bl = screen_fg_color.bl;
 		str++;
 		x++;
 	}

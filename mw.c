@@ -73,7 +73,26 @@ int create_entity(int x, int y, int type);
 int delete_entity(int x, int y);
 
 void move_entity(int start_x, int start_y, int end_x, int end_y){
+}
 
+void disp_inventory(){
+	int offset_x = 25, offset_y = 15;
+	screen_set_fg_color(1.0, 1.0, 1.0);
+	screen_set_bg_color(0.25, 0.25, 0.25);
+	screen_bg_block_update_border(offset_x, offset_y, offset_x+28, offset_y+28);
+	screen_mv_add_str(offset_x+5, offset_y + 25, "Inventory and Status");
+	screen_set_fg_color(1.0, 0.65, 0.23);
+	offset_x+=3;
+	screen_set_fg_color(1.0, 0.65, 0.23);
+	screen_mv_add_str(offset_x, offset_y+20, "Experience Points");
+	screen_set_fg_color(1.0, 0.0, 0.0);
+	screen_mv_add_str(offset_x, offset_y+17, "Strength");
+	screen_set_fg_color(0.0, 0.0, 1.0);
+	screen_mv_add_str(offset_x, offset_y+14, "Dexterity");
+	screen_set_fg_color(0.0, 1.0, 0.0);
+	screen_mv_add_str(offset_x, offset_y+11, "Magic");
+	screen_set_fg_color(1.0, 0.65, 0.23);
+	screen_mv_add_str(offset_x, offset_y+8, "Defense");
 }
 
 /* general information about unit types */
@@ -208,6 +227,9 @@ void keyboard(unsigned char key, int x, int y){
 		break;
 	case 'm':
 		disp_map();
+		break;
+	case 'i':
+		disp_inventory();
 		break;
 	case 'r':
 		//move_entity(selected_entity.x, selected_entity.y, selected_entity.x-1, selected_entity.y);
