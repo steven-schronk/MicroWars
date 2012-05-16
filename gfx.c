@@ -84,6 +84,16 @@ void screen_bg_update(int x, int y){
 	s[x][y].bg_bl = screen_bg_color.bl;
 }
 
+void screen_fg_update(int x, int y){
+	assert(x <= WIDTH);
+	assert(y <= HEIGHT);
+	assert(x >= 0);
+	assert(y >= 0);
+	s[x][y].fg_rd = screen_fg_color.rd;
+	s[x][y].fg_gr = screen_fg_color.gr;
+	s[x][y].fg_bl = screen_fg_color.bl;
+}
+
 void screen_bg_block_update(int start_x, int start_y, int end_x, int end_y){
 	int x, y;
 	assert(start_x >= 0);
@@ -94,8 +104,7 @@ void screen_bg_block_update(int start_x, int start_y, int end_x, int end_y){
 	assert(start_y <= end_y);
 	for(x = start_x; x <= end_x && x < WIDTH; x++){
 		for(y = start_y; y <= end_y && y < HEIGHT; y++){
-			screen_set_bg_color(screen_bg_color.rd, screen_bg_color.gr, screen_bg_color.bl);
-			printf("Updating Char\n");
+			screen_fg_update(x, y);
 			screen_char_update(x, y, '\0');
 			screen_bg_update(x, y);
 		}
@@ -112,7 +121,7 @@ void screen_bg_block_update_border(int start_x, int start_y, int end_x, int end_
 	assert(start_y <= end_y);
 	for(x = start_x; x <= end_x && x < WIDTH; x++){
 		for(y = start_y; y <= end_y && y < HEIGHT; y++){
-			screen_set_bg_color(screen_bg_color.rd, screen_bg_color.gr, screen_bg_color.bl);
+			screen_fg_update(x, y);
 			screen_char_update(x, y, '\0');
 			screen_bg_update(x, y);
 		}

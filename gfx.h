@@ -46,8 +46,11 @@ void screen_fg_update_color(int x, int y, char ch);
 /* change single character on screen */
 void screen_char_update(int x, int y, char ch);
 
-/* change color of background color on screen */
+/* change color of background to current color at this location */
 void screen_bg_update(int x, int y);
+
+/* change color of foreground to current color at this location */
+void screen_fg_update(int x, int y);
 
 /* update block of screen with color */
 void screen_bg_block_update(int start_x, int start_y, int end_x, int end_y);
