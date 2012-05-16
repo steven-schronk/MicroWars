@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <GL/glut.h>
+#include <GL/glut.h>q
 
 #include "lib/lib_random.h"
 #include "gfx.h"
@@ -131,21 +131,24 @@ void disp_stats();
 void disp_title_screen(){
 	/* draw floppy disk */
 	screen_set_bg_color(0.027f, 0.23f, 0.45f);
-	screen_set_fg_color(1.0f, 1.0f, 1.0f);
-	screen_bg_block_update(20, 22, 56, 45);
+	screen_bg_block_update(37, 17, 73, 40);
 
+	screen_set_bg_color(0.0f, 0.0f, 0.0f);
+	screen_bg_block_update(38, 18, 39, 18); 	/* copy protect hole */
+
+	screen_set_bg_color(0.3f, 0.3f, 0.3f);
+	screen_bg_block_update(44, 32, 67, 40); 	/* metal sliding window */
+
+	screen_set_bg_color(0.027f, 0.23f, 0.45f);
+	screen_bg_block_update(58, 33, 62, 39); 	/* hole in window */
+
+	screen_set_bg_color(0.75f, 0.75f, 0.75f);
+	screen_bg_block_update(42, 17, 70, 30);		/* label on disk */
+
+	screen_set_fg_color(0.25f, 0.25f, 0.25f);
 	screen_str_center_horiz(HEIGHT/2+2, "MicroWars");
 	screen_str_center_horiz(HEIGHT/2, "Steven Ray Schronk");
 	screen_str_center_horiz(HEIGHT/2-4, "Press Any Key To Continue");
-
-	screen_set_bg_color(0.0f, 0.0f, 0.0f);
-	screen_bg_block_update(26, 23, 27, 23); /* copy protect hole */
-
-	screen_set_bg_color(0.3f, 0.3f, 0.3f);
-	screen_bg_block_update(25, 37, 48, 45); /* metal sliding window */
-
-	screen_set_bg_color(0.027f, 0.23f, 0.45f);
-	screen_bg_block_update(41, 38, 45, 44); /* hole in metal sliding window */
 }
 
 void display(){

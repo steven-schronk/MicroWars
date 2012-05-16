@@ -272,7 +272,7 @@ void screen_show_x(){
 	x = 0; y = 0;
 	while(x < 120){
 		y = 0;
-		while(y < 60){
+		while(y < 50){
 			sprintf(row, "%d", y);
 			sprintf(column, "%d", x);
 			screen_mv_add_str(x+3, y+5, "X=");
