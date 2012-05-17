@@ -1,6 +1,9 @@
 #ifndef GFX_H_
 #define GFX_H_
 
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 768
+
 #define WIDTH 113	/* number of horizontal squares */
 #define HEIGHT 51	/* number of vertical squares */
 
@@ -93,5 +96,9 @@ void screen_fx_random_square(void);
 
 /* sleep for number of milliseconds */
 void inline msleep(unsigned int ms);
+
+void display();
+
+void reshape();
 
 #endif /* GFX_H_ */

@@ -3,13 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <GL/glut.h>q
+#include <GL/glut.h>
 
 #include "lib/lib_random.h"
 #include "gfx.h"
-
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 768
 
 #define MAP_MAX 10
 
@@ -114,6 +111,7 @@ void disp_monster(int x, int y){
 
 void disp_map(){
 	screen_clear();
+	screen_set_fg_color(1.0f, 1.0f, 1.0f);
 	screen_set_bg_color(0.0f, 0.0f, 0.3f);
 	screen_bg_block_update(1,11,100,12);
 	screen_mv_add_str(WIDTH/2, 12, "MANA");
@@ -151,45 +149,10 @@ void disp_title_screen(){
 	screen_str_center_horiz(HEIGHT/2-4, "Press Any Key To Continue");
 }
 
-void display(){
-	int x, y;
-	glClear(GL_COLOR_BUFFER_BIT);
-	for(x = 0; x < WIDTH; x++){
-		for(y = 0; y < HEIGHT; y++){
-			/* background poly */
-			glColor3f(s[x][y].bg_rd, s[x][y].bg_gr, s[x][y].bg_bl);
-			glBegin(GL_POLYGON);
-				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
-				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y);
-				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y+OFFSET_Y);
-				glVertex2i(x*OFFSET_X, y*OFFSET_Y+OFFSET_Y);
-				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
-			glEnd();
-
-			/* foreground text */
-			glColor3f(s[x][y].fg_rd, s[x][y].fg_gr, s[x][y].fg_bl);
-			glRasterPos2f(x*OFFSET_X, (y*OFFSET_Y)+3);
-			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, s[x][y].ch);
-		}
-}
-	glFlush();
-	glutSwapBuffers();
-}
-
-void init(void){
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glShadeModel(GL_FLAT);
-	/* glEnable(GL_DEPTH_TEST); */
-}
-
-void reshape(){
-	glutReshapeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
-	display();
-}
-
 void keyboard(unsigned char key, int x, int y){
 	x = 0;
 	y = 0;
+	key = tolower(key);
 	printf("Keypress: %c\n", key);
 	switch (key){
 	case 'a':

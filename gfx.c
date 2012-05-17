@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lib/lib_random.h"
+#include <GL/glut.h>
 #include "gfx.h"
 
 void screen_copy(int x, int y){
@@ -378,4 +379,40 @@ void inline msleep(unsigned int ms){
 	if (ms > 1000) sleep(ms/1000000);
 	usleep((ms % 1000000) * 1000);
 #endif
+}
+
+void display(){
+	int x, y;
+	glClear(GL_COLOR_BUFFER_BIT);
+	for(x = 0; x < WIDTH; x++){
+		for(y = 0; y < HEIGHT; y++){
+			/* background poly */
+			glColor3f(s[x][y].bg_rd, s[x][y].bg_gr, s[x][y].bg_bl);
+			glBegin(GL_POLYGON);
+				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
+				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y);
+				glVertex2i(x*OFFSET_X+OFFSET_X, y*OFFSET_Y+OFFSET_Y);
+				glVertex2i(x*OFFSET_X, y*OFFSET_Y+OFFSET_Y);
+				glVertex2i(x*OFFSET_X,y*OFFSET_Y);
+			glEnd();
+
+			/* foreground text */
+			glColor3f(s[x][y].fg_rd, s[x][y].fg_gr, s[x][y].fg_bl);
+			glRasterPos2f(x*OFFSET_X, (y*OFFSET_Y)+3);
+			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, s[x][y].ch);
+		}
+}
+	glFlush();
+	glutSwapBuffers();
+}
+
+void init(void){
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glShadeModel(GL_FLAT);
+	/* glEnable(GL_DEPTH_TEST); */
+}
+
+void reshape(){
+	glutReshapeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
+	display();
 }
