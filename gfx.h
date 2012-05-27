@@ -99,6 +99,8 @@ void inline msleep(unsigned int ms);
 
 void display();
 
+void init();
+
 void reshape();
 
 #endif /* GFX_H_ */

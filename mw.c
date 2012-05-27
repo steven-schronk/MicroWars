@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,36 +9,25 @@
 #include "lib/lib_random.h"
 #include "gfx.h"
 
-#define MAP_MAX 10
+#define MAP_MAX 10		// width and height of this map
 
-struct unit_type {
-	enum { soldier, tank, sub } unit_name;
-	int cost;
-	int attack_range;
-	int attack_strength;
-	int move_range; /* number of tiles a unit can move in one turn   */
-	int current_strength;
-};
-
-static struct unit_type units[3];
-
-struct tile_type {
-	struct unit_type *unit;
-	enum { mountain, sea, grassland, forrest } terrain_type;
-	int tile_selected;	/* user has cursor on this tile */
-};
-
-static struct tile_type map[MAP_MAX][MAP_MAX];
-
-struct game_type {
-	int money;
+struct player_type {
+	int strength;
+	int health;
 	int turns_total;
 	int turns_player;
-	int money_turn;
-	int money_base;
-};
+} player;
 
-static struct game_type game = { 0, 0, 0, 0, 0 };
+struct map_type {
+	struct unit_type *unit;
+	enum { mountain, sea, grassland, forrest, road } terrain;
+} map[MAP_MAX][MAP_MAX];
+
+struct unit_type {
+	int moveable;
+	int strength;
+	int health;
+};
 
 /* setup map structure for game */
 void init_map(){
@@ -46,11 +36,13 @@ void init_map(){
 	for (i = 0; i < MAP_MAX; i++)
 		for (j = 0; j < MAP_MAX; j++){
 			map[i][j].unit = NULL;
-			map[i][j].terrain_type = random_int(0, forrest); /* TODO: length */
+			map[i][j].terrain = random_int(0, road); /* TODO: length */
 			/* create bases and starting units for each side */
 			if (random_int(0, 5) == 4){
 				map[i][j].unit = malloc(sizeof(struct unit_type));
-				map[i][j].unit->unit_name = random_int(0, 3);
+				map[i][j].unit->moveable = random_int(0, 1);
+				map[i][j].unit->strength = random_int(0, 100);
+				map[i][j].unit->health = random_int(0, 1);
 			}
 		}
 }
@@ -101,15 +93,8 @@ void disp_options(){
 	printf("Q=Quit\tH=Help\n");
 }
 
-/* display generic monster type at position*/
-/* TODO: make generic display entity routine */
-void disp_monster(int x, int y){
-	screen_set_bg_color(0.125f, 0.125f, 0.125f);
-	screen_set_fg_color(0.0f, 1.0f, 0.3f);
-	screen_fg_update_color(x, y, 'M');
-}
-
 void disp_map(){
+	int x, y;
 	screen_clear();
 	screen_set_fg_color(1.0f, 1.0f, 1.0f);
 	screen_set_bg_color(0.0f, 0.0f, 0.3f);
@@ -120,7 +105,22 @@ void disp_map(){
 	screen_mv_add_str(WIDTH/2-1, 14, "HEALTH");
 	screen_set_bg_color(0.125f, 0.125f, 0.125f);
 	screen_bg_block_update_border(0, 0, WIDTH-1, 10);
-	disp_monster(20,20);
+
+	/* draw map in top left corner */
+	for(x = 0; x < MAP_MAX; x++)
+		for(y = 0; y < MAP_MAX; y++)
+			if(map[x][y].terrain) {
+				switch(map[x][y].terrain) {
+					// TODO: Update background color instead!!
+					case 0 : screen_set_bg_color(0.25f, 0.375f, 0.875); break;
+					case 1 : screen_set_bg_color(0.125f, 0.375f, 0.875); break;
+					case 2 : screen_set_bg_color(0.25f, 0.375f, 0.175); break;
+					case 3 : screen_set_bg_color(0.625f, 0.375f, 0.875); break;
+					case 4 : screen_set_bg_color(0.25f, 0.175f, 0.875); break;
+					default: screen_set_bg_color(0.0f, 0.0f, 0.0f); break;
+				}
+				screen_bg_update(x, y);
+			}
 }
 
 /* show statistics about game */
