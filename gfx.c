@@ -312,11 +312,11 @@ void screen_fx_random(){
 	random_seed();
 	for(x=0; x < WIDTH; x++){
 		for(y = 0; y < HEIGHT; y++){
-			s[x][y].bg_bl =  (float)random_int(1,10000)/10000;
-			s[x][y].bg_rd =   (float)random_int(1,10000)/10000;
+			s[x][y].bg_bl = (float)random_int(1,10000)/10000;
+			s[x][y].bg_rd = (float)random_int(1,10000)/10000;
 			s[x][y].bg_gr = (float)random_int(1,10000)/10000;
-			s[x][y].fg_bl =  (float)random_int(1,10000)/10000;
-			s[x][y].fg_rd =   (float)random_int(1,10000)/10000;
+			s[x][y].fg_bl = (float)random_int(1,10000)/10000;
+			s[x][y].fg_rd = (float)random_int(1,10000)/10000;
 			s[x][y].fg_gr = (float)random_int(1,10000)/10000;
 			s[x][y].ch = random_int(0, 128);
 		}
@@ -402,7 +402,7 @@ void display(){
 			glRasterPos2f(x*OFFSET_X, (y*OFFSET_Y)+3);
 			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, s[x][y].ch);
 		}
-}
+	}
 	glFlush();
 	glutSwapBuffers();
 }
