@@ -269,7 +269,9 @@ void screen_show_x(){
 		}
 	}
 
+	screen_draw_arrow(1,1);
 	/* mark blocks by tens */
+	screen_set_fg_color(1.0, 1.0, 1.0);
 	x = 0; y = 0;
 	while(x < 120){
 		y = 0;
@@ -284,7 +286,6 @@ void screen_show_x(){
 		}
 			x += 10;
 	}
-	screen_draw_arrow(1,1);
 }
 
 void screen_show_chars(){
